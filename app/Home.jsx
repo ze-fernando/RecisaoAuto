@@ -45,6 +45,7 @@ export default function Home() {
     const generatePdf = async () => {
         console.log("html")
         const htmlString = await generateRescisaoHTML({
+            empregador,
             empregado,
             entrada,
             saida,
@@ -62,7 +63,7 @@ export default function Home() {
         await shareAsync(file.uri)
     };
 
-    const generateRescisaoHTML = async ({ empregado, entrada, saida, motivo, salario, campos }) => {
+    const generateRescisaoHTML = async ({ empregador, empregado, entrada, saida, motivo, salario, campos }) => {
         // Função para formatar valores monetários
         let totalValue = await getTotal();
         console.log(totalValue)
@@ -93,6 +94,7 @@ export default function Home() {
             <h1 style="${htmlStyles.title}">Cálculos Rescisórios</h1>
             
             <div style="${htmlStyles.infoSection}">
+            <p style="${htmlStyles.emphasis}"><strong>Empregado:</strong> ${empregador || 'Não informado'}</p>
               <p style="${htmlStyles.emphasis}"><strong>Empregado:</strong> ${empregado || 'Não informado'}</p>
               <p style="${htmlStyles.emphasis}"><strong>Período:</strong> ${entrada || '__/__/____'} a ${saida || '__/__/____'}</p>
               <p style="${htmlStyles.emphasis}"><strong>Motivo da saída:</strong> ${motivo || 'Não informado'}</p>
@@ -225,10 +227,10 @@ export default function Home() {
                 ))}
             </View>
 
-            <View style={{width: '100%', justifyContent: 'center', alignItems: 'center'}}>
-            <TouchableOpacity style={styles.button} onPress={adicionarCampo}>
-                <Text style={styles.textButton}>+ Adicionar campo</Text>
-            </TouchableOpacity>
+            <View style={{ width: '100%', justifyContent: 'center', alignItems: 'center' }}>
+                <TouchableOpacity style={styles.button} onPress={adicionarCampo}>
+                    <Text style={styles.textButton}>+ Adicionar campo</Text>
+                </TouchableOpacity>
             </View>
             <StatusBar style="auto" />
         </ScrollView>
