@@ -1,4 +1,4 @@
-package com.andersondev.RecisaoAuto
+package com.zefernando.RecisaoAuto
 
 import android.app.Application
 import android.content.res.Configuration
