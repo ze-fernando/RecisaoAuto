@@ -25,6 +25,7 @@ const styles = StyleSheet.create({
         top: 10,
         left: 10,
         color: '#ececec',
+        opacity: .9,
         fontWeight: 'bold',
         zIndex: 1,
     },

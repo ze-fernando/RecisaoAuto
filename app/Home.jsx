@@ -17,16 +17,7 @@ export default function Home() {
 
     const [campos, setCampos] = useState([]);
 
-    const [total, setTotal] = useState();
-
-    const getTotal = async () => {
-        let value = 0;
-        campos.forEach(c => {
-            const numberValue = parseFloat(c.valor.replace('.', '').replace(',', '.')) || 0;
-            value += numberValue;
-        })
-        return value;
-    }
+    const [total, setTotal] = useState('');
 
     const adicionarCampo = () => {
         setCampos([...campos, {
@@ -64,9 +55,6 @@ export default function Home() {
     };
 
     const generateRescisaoHTML = async ({ empregador, empregado, entrada, saida, motivo, salario, campos }) => {
-        // Função para formatar valores monetários
-        let totalValue = await getTotal();
-        console.log(totalValue)
         const formatCurrency = (value) => {
             if (!value) return 'R$ 0,00';
             const number = typeof value === 'string'
@@ -78,14 +66,28 @@ export default function Home() {
             });
         };
 
-        // Gera os itens dinâmicos
         const generateItens = () => {
-            return campos.map((campo, index) => `
-            <div style="${htmlStyles.itemRow}">
-              <span>${campo.titulo || `Item ${index + 1}`}</span>
-              <span style="${htmlStyles.value}">${campo.valor ? formatCurrency(campo.valor) : 'R$ 0,00'}</span>
-            </div>
-          `).join('');
+            return campos.map((campo, index) => {
+                const isSubtotal = /^sub[\s-]?total$/i.test(campo.titulo?.trim() || '');
+                const isNegative = campo.valor < 0;
+
+                const rowStyle = isSubtotal
+                    ? `${htmlStyles.itemRow}; font-weight: bold; margin-top: 20px;`
+                    : isNegative
+                        ? `${htmlStyles.itemRow}; margin-bottom: 20px;`
+                        : htmlStyles.itemRow;
+
+                const valueStyle = isSubtotal
+                    ? `${htmlStyles.totalValue}; font-size: 14px;`
+                    : htmlStyles.value;
+
+                return `
+      <div style="${rowStyle}">
+        <span>${campo.titulo || `Item ${index + 1}`}</span>
+        <span style="${valueStyle}">${isNegative && '-'} ${formatCurrency(campo.valor)}</span>
+      </div>
+    `;
+            }).join('');
         };
 
         // HTML completo
@@ -94,7 +96,7 @@ export default function Home() {
             <h1 style="${htmlStyles.title}">Cálculos Rescisórios</h1>
             
             <div style="${htmlStyles.infoSection}">
-            <p style="${htmlStyles.emphasis}"><strong>Empregado:</strong> ${empregador || 'Não informado'}</p>
+            <p style="${htmlStyles.emphasis}"><strong>Empregador:</strong> ${empregador || 'Não informado'}</p>
               <p style="${htmlStyles.emphasis}"><strong>Empregado:</strong> ${empregado || 'Não informado'}</p>
               <p style="${htmlStyles.emphasis}"><strong>Período:</strong> ${entrada || '__/__/____'} a ${saida || '__/__/____'}</p>
               <p style="${htmlStyles.emphasis}"><strong>Motivo da saída:</strong> ${motivo || 'Não informado'}</p>
@@ -107,7 +109,7 @@ export default function Home() {
               <!-- Total -->
               <div style="${htmlStyles.totalRow}">
                 <strong>Valor a receber:</strong>
-                <strong style="${htmlStyles.totalValue}">R$ ${totalValue}</strong>
+                <strong style="${htmlStyles.totalValue}">R$ ${total}</strong>
               </div>
             </div>
           </div>
@@ -116,7 +118,6 @@ export default function Home() {
         return html;
     };
 
-    // Objeto de estilos (mesmo do exemplo anterior, mas adaptado para string CSS)
     const htmlStyles = {
         container: `
           font-family: Arial, sans-serif;
@@ -227,6 +228,8 @@ export default function Home() {
                 ))}
             </View>
 
+            <CustomInput placeholder="Valor total" style={{ width: '90%', marginVertical: 10 }} value={total} onChangeText={setTotal} type='numeric' />
+
             <View style={{ width: '100%', justifyContent: 'center', alignItems: 'center' }}>
                 <TouchableOpacity style={styles.button} onPress={adicionarCampo}>
                     <Text style={styles.textButton}>+ Adicionar campo</Text>
@@ -259,8 +262,9 @@ const styles = StyleSheet.create({
         color: 'white',
     },
     containerInput: {
-        width: '97%',
+        width: '100%',
         justifyContent: 'center',
+
         alignContent: 'center',
         marginTop: '10%',
         columnGap: 5,
