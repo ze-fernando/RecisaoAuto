@@ -84,7 +84,7 @@ export default function Home() {
                 return `
       <div style="${rowStyle}">
         <span>${campo.titulo || `Item ${index + 1}`}</span>
-        <span style="${valueStyle}">${isNegative && '-'} ${formatCurrency(campo.valor)}</span>
+        <span style="${valueStyle}">${isNegative ? `- + ${formatCurrency(campo.valor)}` : formatCurrency(campo.valor)}</span>
       </div>
     `;
             }).join('');
@@ -196,6 +196,8 @@ export default function Home() {
                 </View>
             </View>
 
+            <Text style={styles.span}></Text>
+
             <View style={styles.tableContainer}>
                 {campos.map((campo, index) => (
                     <View key={campo.id} style={styles.row}>
@@ -270,8 +272,6 @@ const styles = StyleSheet.create({
         columnGap: 5,
         rowGap: 20,
         paddingBottom: 15,
-        borderBottomColor: 'white',
-        borderBottomWidth: 1,
     },
     boxInput: {
         flexDirection: 'row',
@@ -279,6 +279,13 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         alignSelf: 'center',
         justifyContent: 'space-between',
+    },
+    span: {
+        width: '95%',
+        paddingHorizontal: 3,
+        backgroundColor: '#fff',
+        alignSelf: 'center',
+        height: .1
     },
     scrollContainer: {
         width: '100%',
