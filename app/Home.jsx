@@ -14,6 +14,7 @@ export default function Home() {
     const [saida, setSaida] = useState('');
     const [motivo, setMotivo] = useState('');
     const [salario, setSalario] = useState('');
+    const [cargo, setCargo] = useState('');
 
     const [campos, setCampos] = useState([]);
 
@@ -38,6 +39,7 @@ export default function Home() {
         const htmlString = await generateRescisaoHTML({
             empregador,
             empregado,
+            cargo,
             entrada,
             saida,
             motivo,
@@ -54,7 +56,7 @@ export default function Home() {
         await shareAsync(file.uri)
     };
 
-    const generateRescisaoHTML = async ({ empregador, empregado, entrada, saida, motivo, salario, campos }) => {
+    const generateRescisaoHTML = async ({ empregador, empregado, cargo, entrada, saida, motivo, salario, campos }) => {
         const formatCurrency = (value) => {
             if (!value) return 'R$ 0,00';
             const number = typeof value === 'string'
@@ -98,6 +100,7 @@ export default function Home() {
             <div style="${htmlStyles.infoSection}">
             <p style="${htmlStyles.emphasis}"><strong>Empregador:</strong> ${empregador || 'Não informado'}</p>
               <p style="${htmlStyles.emphasis}"><strong>Empregado:</strong> ${empregado || 'Não informado'}</p>
+              <p style="${htmlStyles.emphasis}"><strong>Cargo / Função:</strong> ${cargo || 'Não informado'}</p>
               <p style="${htmlStyles.emphasis}"><strong>Período:</strong> ${entrada || '__/__/____'} a ${saida || '__/__/____'}</p>
               <p style="${htmlStyles.emphasis}"><strong>Motivo da saída:</strong> ${motivo || 'Não informado'}</p>
               <p style="${htmlStyles.emphasis}"><strong>Salário:</strong> ${salario ? formatCurrency(salario) : 'R$ 0,00'}</p>
@@ -184,6 +187,7 @@ export default function Home() {
             <View style={styles.containerInput}>
                 <CustomInput placeholder="Empregador" style={{ width: '90%' }} value={empregador} onChangeText={setEmpregador} type='text' />
                 <CustomInput placeholder="Empregado" style={{ width: '90%' }} value={empregado} onChangeText={setEmpregado} type='text' />
+                <CustomInput placeholder="Cargo/Função" style={{ width: '90%' }} value={cargo} onChangeText={setCargo} type='text' />
 
                 <View style={styles.boxInput}>
                     <CustomInput placeholder="Data Entrada" style={{ width: '45%' }} value={entrada} onChangeText={setEntrada} type='date' />
