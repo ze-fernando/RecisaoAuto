@@ -13,7 +13,8 @@
       "backgroundColor": "#142c5d"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.zefernando.RecisaoAuto"
     },
     "android": {
       "adaptiveIcon": {

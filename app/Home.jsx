@@ -15,6 +15,8 @@ export default function Home() {
     const [motivo, setMotivo] = useState('');
     const [salario, setSalario] = useState('');
     const [cargo, setCargo] = useState('');
+    const [aviso, setAviso] = useState('');
+    const [tipoAviso, setTipoAviso] = useState('');
 
     const [campos, setCampos] = useState([]);
 
@@ -44,6 +46,8 @@ export default function Home() {
             saida,
             motivo,
             salario,
+            aviso,
+            tipoAviso,
             campos
         });
         console.log("file")
@@ -56,7 +60,7 @@ export default function Home() {
         await shareAsync(file.uri)
     };
 
-    const generateRescisaoHTML = async ({ empregador, empregado, cargo, entrada, saida, motivo, salario, campos }) => {
+    const generateRescisaoHTML = async ({ empregador, empregado, cargo, entrada, saida, motivo, salario, aviso, tipoAviso, campos }) => {
         const formatCurrency = (value) => {
             if (!value) return 'R$ 0,00';
             const number = typeof value === 'string'
@@ -92,18 +96,38 @@ export default function Home() {
             }).join('');
         };
 
+        // Gerar informações de aviso prévio apenas se preenchidas
+        const generateAvisoPrevioInfo = () => {
+            if (!aviso && !tipoAviso) return '';
+
+            let info = '<div style="margin-top: 15px;">';
+
+            if (aviso) {
+                info += `<p style="${htmlStyles.emphasis}"><strong>Data do aviso prévio:</strong> ${aviso}</p>`;
+            }
+
+            if (tipoAviso) {
+                info += `<p style="${htmlStyles.emphasis}"><strong>Tipo de aviso prévio:</strong> ${tipoAviso}</p>`;
+            }
+
+            info += '</div>';
+            return info;
+        };
+
         // HTML completo
         const html = `
           <div style="${htmlStyles.container}">
             <h1 style="${htmlStyles.title}">Cálculos Rescisórios</h1>
             
             <div style="${htmlStyles.infoSection}">
-            <p style="${htmlStyles.emphasis}"><strong>Empregador:</strong> ${empregador || 'Não informado'}</p>
+              <p style="${htmlStyles.emphasis}"><strong>Empregador:</strong> ${empregador || 'Não informado'}</p>
               <p style="${htmlStyles.emphasis}"><strong>Empregado:</strong> ${empregado || 'Não informado'}</p>
               <p style="${htmlStyles.emphasis}"><strong>Cargo / Função:</strong> ${cargo || 'Não informado'}</p>
               <p style="${htmlStyles.emphasis}"><strong>Período:</strong> ${entrada || '__/__/____'} a ${saida || '__/__/____'}</p>
               <p style="${htmlStyles.emphasis}"><strong>Motivo da saída:</strong> ${motivo || 'Não informado'}</p>
               <p style="${htmlStyles.emphasis}"><strong>Salário:</strong> ${salario ? formatCurrency(salario) : 'R$ 0,00'}</p>
+              
+              ${generateAvisoPrevioInfo()}
             </div>
       
             <div style="${htmlStyles.calculosSection}">
@@ -188,6 +212,10 @@ export default function Home() {
                 <CustomInput placeholder="Empregador" style={{ width: '90%' }} value={empregador} onChangeText={setEmpregador} type='text' />
                 <CustomInput placeholder="Empregado" style={{ width: '90%' }} value={empregado} onChangeText={setEmpregado} type='text' />
                 <CustomInput placeholder="Cargo/Função" style={{ width: '90%' }} value={cargo} onChangeText={setCargo} type='text' />
+                <View style={styles.boxInput}>
+                    <CustomInput placeholder="Data do aviso pŕevio" style={{ width: '46%' }} value={aviso} onChangeText={setAviso} type='text' />
+                    <CustomInput placeholder="Indenizado/Trabalhado" style={{ width: '46%' }} value={tipoAviso} onChangeText={setTipoAviso} type='text' />
+                </View>
 
                 <View style={styles.boxInput}>
                     <CustomInput placeholder="Data Entrada" style={{ width: '45%' }} value={entrada} onChangeText={setEntrada} type='date' />
